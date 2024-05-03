@@ -1,0 +1,79 @@
+1. Display the Supplier table in the descending order of CITY.
+mysql> select * from s order by city desc;
++------+-----------+--------+----------+
+| s#   | sname     | status | city     |
++------+-----------+--------+----------+
+| s3   | supplier3 |     30 | paris    |
+| s2   | supplier2 |     20 | new york |
+| s1   | supplier1 |     10 | london   |
++------+-----------+--------+----------+
+3 rows in set (0.00 sec)
+
+2. Display the Part Table in the ascending order of CITY and within the city in
+the ascending order of Part names.
+mysql> select * from p order by city asc, pname asc;
++------+-------+-------+--------+----------+
+| p#   | pname | color | weight | city     |
++------+-------+-------+--------+----------+
+| p1   | part1 | red   |   1000 | london   |
+| p2   | part2 | blue  |   2000 | new york |
+| p3   | part3 | green |   1500 | paris    |
++------+-------+-------+--------+----------+
+3 rows in set (0.00 sec)
+
+3. Display all the Suppliers with a status between 10 and 20.
+mysql> select * from s where status between 10 and 20;
++------+-----------+--------+----------+
+| s#   | sname     | status | city     |
++------+-----------+--------+----------+
+| s1   | supplier1 |     10 | london   |
+| s2   | supplier2 |     20 | new york |
++------+-----------+--------+----------+
+2 rows in set (0.00 sec)
+
+4. Display all the Parts and their Weight, which are not in the range of 10 and 15.
+mysql> select * from p where weight between 1000 and 1500;
++------+-------+-------+--------+--------+
+| p#   | pname | color | weight | city   |
++------+-------+-------+--------+--------+
+| p1   | part1 | red   |   1000 | london |
+| p3   | part3 | green |   1500 | paris  |
++------+-------+-------+--------+--------+
+2 rows in set (0.00 sec)
+
+5. Display all the Part names starting with the letter ‘S’.
+mysql> select * from p where pname like 's%';
+Empty set (0.00 sec)
+
+mysql> select * from p where pname like 'p%';
++------+-------+-------+--------+----------+
+| p#   | pname | color | weight | city     |
++------+-------+-------+--------+----------+
+| p1   | part1 | red   |   1000 | london   |
+| p2   | part2 | blue  |   2000 | new york |
+| p3   | part3 | green |   1500 | paris    |
++------+-------+-------+--------+----------+
+3 rows in set (0.00 sec)
+
+6. Display all the Suppliers, belonging to cities starting with the letter ‘L’.
+mysql> select * from s where city like 'l%';
++------+-----------+--------+--------+
+| s#   | sname     | status | city   |
++------+-----------+--------+--------+
+| s1   | supplier1 |     10 | london |
++------+-----------+--------+--------+
+1 row in set (0.00 sec)
+
+7. Display all the Projects, with the third letter in JNAME as ‘n’.
+mysql> select * from j where jname like '__n%';
+Empty set (0.00 sec)
+
+mysql> select * from j where jname like '__o%';
++------+----------+----------+
+| j#   | jname    | city     |
++------+----------+----------+
+| j1   | project1 | london   |
+| j2   | project2 | new york |
+| j3   | project3 | paris    |
++------+----------+----------+
+3 rows in set (0.00 sec)

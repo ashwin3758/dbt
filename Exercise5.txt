@@ -1,0 +1,154 @@
+1. Display the Supplier name and the Quantity sold.
+
+mysql> select s.sname as sname, sum(spj.qty) qty from s join spj on s.`s#`=s
+pj.`s#` group by s.sname;
++-----------+------+
+| sname     | qty  |
++-----------+------+
+| supplier1 |  250 |
+| supplier2 |  200 |
+| supplier3 |  200 |
++-----------+------+
+3 rows in set (0.00 sec)
+
+2. Display the Part name and Quantity sold.
+
+mysql> select p.pname, sum(spj.qty) qty from p join spj on p.`p#`=spj.`p#` g
+roup by p.pname;
++-------+------+
+| pname | qty  |
++-------+------+
+| part1 |  220 |
+| part2 |  150 |
+| part3 |  280 |
++-------+------+
+3 rows in set (0.00 sec)
+
+3. Display the Project name and Quantity sold.
+
+mysql> select j.jname, sum(spj.qty) qty from j join spj on j.`j#`=spj.`j#` g
+roup by j.jname;
++----------+------+
+| jname    | qty  |
++----------+------+
+| project1 |  180 |
+| project2 |  150 |
+| project3 |  320 |
++----------+------+
+
+4. Display the Supplier name, Part name, Project name and Quantity sold.
+
+mysql> select s.sname, p.pname, j.jname, spj.qty from s,p,j,spj where spj.`s#`=s.`s#` and spj.`p#`=p.`p#` and spj.`j#`=j.`j#`;
++-----------+-------+----------+------+
+| sname     | pname | jname    | qty  |
++-----------+-------+----------+------+
+| supplier3 | part3 | project1 |   80 |
+| supplier1 | part1 | project1 |  100 |
+| supplier1 | part2 | project2 |  150 |
+| supplier2 | part3 | project3 |  200 |
+| supplier3 | part1 | project3 |  120 |
++-----------+-------+----------+------+
+5 rows in set (0.00 sec)
+
+5. Display the Supplier name, Supplying Parts to a Project in the same City.
+
+mysql> select distinct s.sname, j.jname, j.city from s join spj on s.`s#`=sp
+j.`s#` join j on spj.`j#`=j.`j#` where s.city=j.city;
++-----------+----------+----------+
+| sname     | jname    | city     |
++-----------+----------+----------+
+| supplier1 | project1 | london   |
+| supplier3 | project3 | paris    |
+| supplier2 | project2 | new york |
++-----------+----------+----------+
+3 rows in set (0.00 sec)
+
+6. Display the Part name that is ‘Red’ is color, and the Quantity sold.
+
+mysql> select p.pname, spj.qty from p,spj where p.color='red';
++-------+------+
+| pname | qty  |
++-------+------+
+| part1 |  100 |
+| part1 |  150 |
+| part1 |  200 |
+| part1 |  120 |
+| part1 |   80 |
+| part1 |   50 |
+| part1 |   70 |
++-------+------+
+7 rows in set (0.00 sec)
+
+7. Display all the Quantity sold by Suppliers with the Status = 20.
+
+mysql> select s.sname, spj.qty from s join spj on s.`s#` = spj.`s#` where s.
+status=20;
++-----------+------+
+| sname     | qty  |
++-----------+------+
+| supplier2 |  200 |
+| supplier2 |   50 |
+| supplier2 |   70 |
++-----------+------+
+3 rows in set (0.00 sec)
+
+8. Display all the Parts and Quantity with a Weight > 14.
+
+mysql> select p.pname,p.weight, spj.qty from p join spj on p.`p#`=spj.`p#` where p.weight>14;
++-------+--------+------+
+| pname | weight | qty  |
++-------+--------+------+
+| part1 |   1000 |  100 |
+| part2 |   2000 |  150 |
+| part3 |   1500 |  200 |
+| part1 |   1000 |  120 |
+| part3 |   1500 |   80 |
+| part2 |   2000 |   50 |
+| part1 |   1000 |   70 |
++-------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> select p.pname,p.weight, spj.qty from p join spj on p.`p#`=spj.`p#` where p.weight>1400;
++-------+--------+------+
+| pname | weight | qty  |
++-------+--------+------+
+| part2 |   2000 |  150 |
+| part3 |   1500 |  200 |
+| part3 |   1500 |   80 |
+| part2 |   2000 |   50 |
++-------+--------+------+
+4 rows in set (0.00 sec)
+
+9. Display all the Project names and City, which has bought more than 500 Parts.
+
+mysql> select j.jname, j.city,spj.qty from j join spj on j.`j#`=spj.`j#` where spj.qty>500;
+Empty set (0.00 sec)
+
+mysql> select j.jname, j.city,spj.qty from j join spj on j.`j#`=spj.`j#` where spj.qty>100;
++----------+----------+------+
+| jname    | city     | qty  |
++----------+----------+------+
+| project2 | new york |  150 |
+| project3 | paris    |  120 |
+| project3 | paris    |  200 |
++----------+----------+------+
+3 rows in set (0.00 sec)
+
+10. Display all the Part names and Quantity sold that have a Weight less than 15.
+
+mysql> select p.pname, p.weight, spj.qty from p join spj on p.`p#`=spj.`p#` where p.weight<15;
+Empty set (0.00 sec)
+
+mysql> select p.pname, p.weight, spj.qty from p join spj on p.`p#`=spj.`p#` where p.weight<2000;
++-------+--------+------+
+| pname | weight | qty  |
++-------+--------+------+
+| part1 |   1000 |  100 |
+| part3 |   1500 |  200 |
+| part1 |   1000 |  120 |
+| part3 |   1500 |   80 |
+| part1 |   1000 |   70 |
++-------+--------+------+
+5 rows in set (0.00 sec)
+
+11. Display all the Employee names and the name of their Managers.

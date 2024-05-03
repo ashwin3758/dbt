@@ -1,0 +1,94 @@
+1. Select from any table a number and determine whether it is within a given range (for
+example, between 1 and 10).
+
+delimiter //
+create procedure in_range(x int,y int)
+begin
+
+declare i int;
+declare done int default false;
+
+declare c cursor for select value from tempp;
+declare continue handler for not found set done=true;
+
+open c;
+
+cursor_c:loop
+fetch c into i;
+
+if done then
+leave cursor_c;
+end if;
+
+if(i between x and y) then
+insert into tempp(result,value) values ('in range',i);
+else
+insert into tempp(result,value) values ('not in range',i);
+end if;
+end loop cursor_c;
+close c;
+end //
+delimiter ;
+
+mysql> call in_range(5,12);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select * from tempp;
++----------------+---------+
+| result         | value   |
++----------------+---------+
+| var            |       2 |
+| sq             |       4 |
+| cube           |       8 |
+| celcius        | 28.0556 |
+| fahrenheit     |    82.5 |
+| yard           |       3 |
+| feet           |       1 |
+| inch           |       4 |
+| isDiv by 5     |      10 |
+| not isDiv by 5 |      11 |
+| <100           |      50 |
+| >100           |     500 |
+| not in range   |       2 |
+| not in range   |       4 |
+| in range       |       8 |
+| not in range   |      28 |
+| not in range   |      82 |
+| not in range   |       3 |
+| not in range   |       1 |
+| not in range   |       4 |
+| in range       |      10 |
+| in range       |      11 |
+| not in range   |      50 |
+| not in range   |     500 |
++----------------+---------+
+24 rows in set (0.00 sec)
+
+
+SELECT 
+    CASE
+        WHEN value BETWEEN 1 AND 10 THEN 'in range'
+        ELSE 'not in range'
+    END AS result
+FROM 
+    tempp
+LIMIT 1;
+
++----------+
+| result   |
++----------+
+| in range |
++----------+
+1 row in set (0.00 sec)
+
+
+2. Select from any table three positive integers representing the sides of a triangle, and
+determine whether they form a valid triangle. Hint: In a triangle, the sum of any two
+sides must always be greater than the third side.
+
+
+3. Check if a given a year is a leap year. The condition is:- year should be (divisible by 4
+and not divisible by 100) or (divisible by 4 and divisible by 400.). The year should be
+Selected from some table.
+4. Write a program that Selects from any table two character strings. Your program should
+then determine if one character string exists inside another character string.

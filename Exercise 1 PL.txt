@@ -1,0 +1,248 @@
+1. Write a program that computes the perimeter and the area of a rectangle. Define
+your own values for the length and width. (Assuming that L and W are the length
+and width of the rectangle, Perimeter = 2*(L+W) and Area = L*W.
+
+delimiter //
+
+create procedure calP_A(in length int, in width int)
+begin
+
+declare perimeter int;
+declare area int;
+
+set perimeter=2*(length+width);
+set area=length*width;
+
+select concat('Length of rect : ',length) as ' ',
+	concat('Width of rect : ',width) as ' ',
+	concat('Perimeter of rect : ',perimeter) as ' ',
+	concat('Area of rect : ',area) as ' ';
+
+end //
+
+delimiter ;
+
+mysql> call calP_A(2,3);
++--------------------+-------------------+------------------------+------------------+
+|                    |                   |                        |                  |
++--------------------+-------------------+------------------------+------------------+
+| Length of rect : 2 | Width of rect : 3 | Perimeter of rect : 10 | Area of rect : 6 |
++--------------------+-------------------+------------------------+------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+2. Write a program that declares an integer variable called num, assigns a value to it,
+and computes and inserts into the tempp table the value of the variable itself, its
+square, and its cube.
+
+delimiter //
+
+create procedure cal(in x int)
+begin
+
+insert into tempp (result,value) values('var',x),('sq',pow(x,2)),('cube',pow(x,3));
+
+end //
+
+delimiter ;
+
+mysql> call cal(2);
++--------+-------+
+| result | value |
++--------+-------+
+| var    |     2 |
+| sq     |     4 |
+| cube   |     8 |
++--------+-------+
+3 rows in set (0.05 sec)
+
+Query OK, 0 rows affected (0.07 sec)
+
+3. Convert a temperature in Fahrenheit (F) to its equivalent in Celsius (C) and vice
+versa. The required formulae are:- C= (F-32)*5/9
+F= 9/5*C + 32
+
+delimiter //
+
+create procedure con(f float)
+begin
+
+declare c float;
+
+set c=(f-32)*(5/9);
+set f=(9/5)*c+32;
+
+insert into tempp(result,value) values('celcius',c),('fahrenheit',f);
+
+end //
+
+delimiter ;
+
+mysql> call con(82.5);
++------------+---------+
+| result     | value   |
++------------+---------+
+| celcius    | 28.0556 |
+| fahrenheit |    82.5 |
++------------+---------+
+2 rows in set (0.03 sec)
+
+4. Convert a number of inches into yards, feet, and inches. For example, 124 inches
+equals 3 yards, 1 foot, and 4 inches.
+
+delimiter //
+
+create procedure in_to_yd(i int)
+begin
+
+declare yard int;
+declare ft int;
+
+set yard=i/36;
+set i=i%36;
+
+set ft=i/12;
+set i=i%12;
+
+insert into tempp (result,value) values('yard',yard),('feet',ft),('inch',i);
+
+end //
+
+delimiter ;
+
+mysql> call in_to_yd(128);
+Query OK, 3 rows affected (0.03 sec)
+
+mysql> select * from tempp;
++--------+-------+
+| result | value |
++--------+-------+
+| yard   |     4 |
+| feet   |     2 |
+| inch   |     8 |
++--------+-------+
+3 rows in set (0.00 sec)
+
+5. Write a program that enables a user to input an integer. The program should then
+state whether the integer is evenly divisible by 5.
+
+delimiter //
+
+create procedure isDiv(x int)
+begin
+
+if x%5=0
+then
+select concat(x,' is divisible by 5') as result;
+else
+select concat(x,' is not divisible by 5') as result;
+end if;
+end //
+
+delimiter ;
+
+mysql> call isdiv(11);
++--------------------------+
+| result                   |
++--------------------------+
+| 11 is not divisible by 5 |
++--------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call isdiv(10);
++----------------------+
+| result               |
++----------------------+
+| 10 is divisible by 5 |
++----------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+delimiter //
+
+create procedure isDiv(x int)
+begin
+
+if x%5=0
+then
+insert into tempp(result,value) value('isDiv by 5',x);
+else
+insert into tempp(result,value) value('not isDiv by 5',x);
+end if;
+end //
+
+delimiter ;
+
+mysql> call isdiv(10);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> call isdiv(11);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from tempp;
++----------------+---------+
+| result         | value   |
++----------------+---------+
+| var            |       2 |
+| sq             |       4 |
+| cube           |       8 |
+| celcius        | 28.0556 |
+| fahrenheit     |    82.5 |
+| yard           |       3 |
+| feet           |       1 |
+| inch           |       4 |
+| isDiv by 5     |      10 |
+| not isDiv by 5 |      11 |
++----------------+---------+
+10 rows in set (0.00 sec)
+
+6. Your block should read in two real numbers and tell whether the product of the two
+numbers is equal to or greater than 100.
+
+delimiter //
+
+create procedure great(x int,y int)
+begin
+
+declare result int;
+
+set result=x*y;
+
+if(result>100)
+then
+insert into tempp(result,value) values('>100',result);
+else
+insert into tempp(result,value) values('<100',result);
+end if;
+end //
+
+delimiter ;
+
+mysql> call great(5,10);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> call great(50,10);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from tempp;
++----------------+---------+
+| result         | value   |
++----------------+---------+
+| var            |       2 |
+| sq             |       4 |
+| cube           |       8 |
+| celcius        | 28.0556 |
+| fahrenheit     |    82.5 |
+| yard           |       3 |
+| feet           |       1 |
+| inch           |       4 |
+| isDiv by 5     |      10 |
+| not isDiv by 5 |      11 |
+| <100           |      50 |
+| >100           |     500 |
++----------------+---------+
+12 rows in set (0.00 sec)

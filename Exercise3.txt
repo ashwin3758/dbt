@@ -1,0 +1,198 @@
+1. Display all the Supplier names with the initial letter capital.
+
+mysql> select concat(upper(left(sname,1)),right(sname,length(sname)-1)) sname from s;
++-----------+
+| sname     |
++-----------+
+| Supplier1 |
+| Supplier2 |
+| Supplier3 |
++-----------+
+3 rows in set (0.00 sec)
+
+2. Display all the Supplier names in upper case.
+
+mysql> select upper(sname) sname from s;
++-----------+
+| sname     |
++-----------+
+| SUPPLIER1 |
+| SUPPLIER2 |
+| SUPPLIER3 |
++-----------+
+3 rows in set (0.00 sec)
+
+3. Display all the Supplier names in lower case.
+
+mysql> select lower(sname) sname from s;
++-----------+
+| sname     |
++-----------+
+| supplier1 |
+| supplier2 |
+| supplier3 |
++-----------+
+3 rows in set (0.00 sec)
+
+4. Display all the Supplier names padded to 25 characters, with spaces on the left.
+
+mysql> select lpad(sname,25,' ') sname from s;
++---------------------------+
+| sname                     |
++---------------------------+
+|                 supplier1 |
+|                 supplier2 |
+|                 supplier3 |
++---------------------------+
+3 rows in set (0.00 sec)
+
+5. Display all the Supplier names (with ‘la’ replaced by ‘ro’).
+HINT: REPLACE.
+6. Implement the above command such that ‘l’ is replaced with ‘r’ and ‘a’ is replaced
+with ‘o’.
+
+mysql> select replace(sname,'la','ro') sname from s;
++-----------+
+| sname     |
++-----------+
+| supplier1 |
+| supplier2 |
+| supplier3 |
++-----------+
+3 rows in set (0.00 sec)
+
+mysql> select replace(sname,'li','ro') sname from s;
++-----------+
+| sname     |
++-----------+
+| supproer1 |
+| supproer2 |
+| supproer3 |
++-----------+
+3 rows in set (0.00 sec)
+
+7. Display the Supplier names and the lengths of the names.
+
+mysql> select sname,length(sname) length from s;
++-----------+--------+
+| sname     | length |
++-----------+--------+
+| supplier1 |      9 |
+| supplier2 |      9 |
+| supplier3 |      9 |
++-----------+--------+
+3 rows in set (0.00 sec)
+
+8. Use the soundex function to search for a supplier by the name of ‘BLOKE’.
+
+mysql> select * from s where soundex(sname)=soundex('bloke');
+Empty set (0.00 sec)
+
+mysql> select * from s where soundex(sname)=soundex('supplier');
++------+-----------+--------+----------+
+| s#   | sname     | status | city     |
++------+-----------+--------+----------+
+| s1   | supplier1 |     10 | london   |
+| s2   | supplier2 |     20 | new york |
+| s3   | supplier3 |     30 | paris    |
++------+-----------+--------+----------+
+3 rows in set (0.00 sec)
+
+9. Display the Supplier name and the status (as Ten, Twenty, Thirty, etc.).
+
+DELIMITER
+
+CREATE FUNCTION number_to_words(num INT)
+RETURNS VARCHAR(1000)
+BEGIN
+    DECLARE result VARCHAR(1000) DEFAULT '';
+
+    IF num = 0 THEN
+        SET result = 'Zero';
+    ELSE
+        DECLARE units VARCHAR(20);
+        DECLARE tens VARCHAR(20);
+        DECLARE hundreds VARCHAR(20);
+        DECLARE thousands VARCHAR(20);
+
+        SET thousands = CASE
+            WHEN num >= 1000 AND num < 1000000 THEN CONCAT(number_to_words(FLOOR(num / 1000)), ' Thousand ')
+            ELSE ''
+        END;
+
+        SET hundreds = CASE
+            WHEN num >= 100 THEN CONCAT(number_to_words(FLOOR(num / 100) MOD 10), ' Hundred ')
+            ELSE ''
+        END;
+
+        SET tens = CASE
+            WHEN num MOD 100 >= 20 THEN CONCAT(
+                CASE FLOOR(num MOD 100 / 10)
+                    WHEN 2 THEN 'Twenty'
+                    WHEN 3 THEN 'Thirty'
+                    WHEN 4 THEN 'Forty'
+                    WHEN 5 THEN 'Fifty'
+                    WHEN 6 THEN 'Sixty'
+                    WHEN 7 THEN 'Seventy'
+                    WHEN 8 THEN 'Eighty'
+                    WHEN 9 THEN 'Ninety'
+                END,
+                CASE num MOD 10
+                    WHEN 1 THEN '-One'
+                    WHEN 2 THEN '-Two'
+                    WHEN 3 THEN '-Three'
+                    WHEN 4 THEN '-Four'
+                    WHEN 5 THEN '-Five'
+                    WHEN 6 THEN '-Six'
+                    WHEN 7 THEN '-Seven'
+                    WHEN 8 THEN '-Eight'
+                    WHEN 9 THEN '-Nine'
+                    ELSE ''
+                END
+            )
+            WHEN num MOD 100 >= 10 THEN
+                CASE num MOD 100
+                    WHEN 10 THEN 'Ten'
+                    WHEN 11 THEN 'Eleven'
+                    WHEN 12 THEN 'Twelve'
+                    WHEN 13 THEN 'Thirteen'
+                    WHEN 14 THEN 'Fourteen'
+                    WHEN 15 THEN 'Fifteen'
+                    WHEN 16 THEN 'Sixteen'
+                    WHEN 17 THEN 'Seventeen'
+                    WHEN 18 THEN 'Eighteen'
+                    WHEN 19 THEN 'Nineteen'
+                    ELSE ''
+                END
+            ELSE
+                CASE num MOD 10
+                    WHEN 1 THEN 'One'
+                    WHEN 2 THEN 'Two'
+                    WHEN 3 THEN 'Three'
+                    WHEN 4 THEN 'Four'
+                    WHEN 5 THEN 'Five'
+                    WHEN 6 THEN 'Six'
+                    WHEN 7 THEN 'Seven'
+                    WHEN 8 THEN 'Eight'
+                    WHEN 9 THEN 'Nine'
+                    ELSE ''
+                END
+            END;
+        
+        SET result = CONCAT(thousands, hundreds, tens);
+    END IF;
+
+    RETURN TRIM(result);
+END 
+DELIMITER ;
+
+SELECT number_to_words(123) AS WordRepresentation;
+
+10. Display the current day (e.g. Thursday).
+mysql> SELECT DAYNAME(CURDATE()) AS current_day;
++-------------+
+| current_day |
++-------------+
+| Wednesday   |
++-------------+
+1 row in set (0.01 sec)
